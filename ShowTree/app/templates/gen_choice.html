@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>choice</title>
+    <style type="text/css">
+        body{
+            width: 80%;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <table border="1">
+        <tr>
+            <th>划分属性</th>
+            <th>划分值</th>
+            <th>划分效果</th>
+        </tr>
+        {% for choice in choices %}
+        <tr>
+            <td>{{choice.index}}</td>
+            <td>{{choice.value}}</td>
+            <td>{{choice.score}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p>
+        {% if page_no != 0 %}
+        <a href="/choice?page_no={{page_no-page_cnt}}&page_cnt={{page_cnt}}&choiceId={{choiceId}}">上一页</a> 
+        {% endif %} 
+        {% if page_no+page_cnt<=choices_num %} 
+        <a href="/choice?page_no={{page_no+page_cnt}}&page_cnt={{page_cnt}}&choiceId={{choiceId}}">下一页</a>
+        {% endif %}
+    </p>
+</body>
+
+</html>
+<script language="javascript" src="http://code.jquery.com/jquery-1.8.3.js"></script>

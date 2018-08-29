@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>无标题文档</title>
+    <style type="text/css">
+        body {
+            font-size: 14px;
+            margin: 0;
+        }
+        
+        div {
+            width: auto;
+            height: auto;
+            line-height: 150%;
+        }
+        
+        ul {
+            list-style: none;
+            margin-left: -20px;
+        }
+        /* ul li:hover{
+        background-color:#DDDDDD;
+        color:#FF0000;
+        cursor:pointer;} */
+        
+        li.stem:hover {
+            cursor: pointer;
+        }
+        
+        li.stem:hover+ul {
+            background-color: #DDDDDD;
+            cursor: pointer;
+        }
+        
+        li.stem {
+            color: green;
+        }
+        
+        li.rumor_leaf {
+            color: red;
+        }
+        
+        li.news_leaf {
+            color: blue;
+        }
+        
+        li.stem>label {
+            color: black;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="continer"></div>
+</body>
+
+</html>
+<script language="javascript" src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<link rel="Stylesheet" type="text/css" href="../css/wSelect.css" />
+<script type="text/javascript" src="../js/wSelect.min.js"></script>
+<script language="javascript">
+    //模拟数据
+    var jsonData = "";
+    $.ajax({
+        url: "test_gini_decision_tree.json",
+        data: {},
+        type: "POST",
+        dataType: "JSON",
+        success: function(result) {
+            jsonData = result;
+            console.log(jsonData)
+            main();
+        }
+    });
+
+    // 显示系数列表
+    function createBtn(lst) {
+        btn = '<select id="index_list" tabindex="1">';
+        btn += '<option> 划分属性, 划分值, Gini系数</option>';
+        for (var i = 0; i < lst.length; i++) {
+            btn += "<option>" +
+                lst[i].index + ", " +
+                lst[i].value.toFixed(6) + ", " +
+                lst[i].score.toFixed(6) +
+                "</option>";
+        }
+        btn += "</select>"
+        return btn;
+    }
+    // 主方法，运用递归实现
+    function createTree(jsons) {
+        if (jsons != null) {
+            var ul = '<ul class="keep">';
+            if (typeof(jsons.index) == "undefined") {
+                if (jsons == "0") {
+                    ul += '<li class="rumor_leaf">' + "谣言" + "</li>";
+                } else {
+                    ul += '<li class="news_leaf">' + "新闻" + "</li>";
+                }
+            } else {
+                ul += '<li class="stem">' +
+                    jsons.index + " " +
+                    "划分点=" + jsons.value + " ";
+                if (jsons.choice.length > 0) {
+                    ul += createBtn(jsons.choice);
+                }
+                ul += "</li>";
+                ul += '<ul class="children">';
+                ul += "<li> < " + jsons.value + "</li>";
+                ul += createTree(jsons.left);
+                ul += "<li> >=" + jsons.value + "</li>";
+                ul += createTree(jsons.right);
+                ul += "</ul>";
+            }
+            ul += "</ul>";
+        }
+        return ul;
+    }
+
+    function main() {
+        ul = createTree(jsonData);
+
+        $("#continer").append(ul);
+
+        //控制菜单的隐藏显示
+        $("ul[class] li[class='stem']").each(function() {
+            $(this).click(function() {
+                $(this).next().toggle("easeOutElastic");
+            });
+        });
+
+        // $('select').wSelect();
+    }
+</script>
